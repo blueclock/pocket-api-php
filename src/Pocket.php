@@ -193,7 +193,3 @@ class Pocket {
 	}
 
 }
-
-class PocketException extends Exception {
-	// TODO
-}
