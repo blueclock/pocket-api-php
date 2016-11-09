@@ -1,0 +1,3 @@
+class PocketException extends Exception {
+
+}
