@@ -9,6 +9,8 @@
  * @license	MIT License
  */
 
+use PocketException;
+
 class Pocket {
 
 	/**
