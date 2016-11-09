@@ -34,19 +34,19 @@ class Pocket {
 	*/
 	const CURL_USERAGENT = 'php-pocket 0.2';
 
-	private $_config = array(
+	private $_config = [
 		'apiUrl' => 'https://getpocket.com/v3',
 		'consumerKey' => null,
 		'accessToken' => null,
 		'debug' => false
-	);
+    ];
 
-	private static $_statusCodes = array(
+	private static $_statusCodes = [
 		400 => 'Invalid request, please make sure you follow the documentation for proper syntax',
 		401 => 'Problem authenticating the user',
 		403 => 'User was authenticated, but access denied due to lack of permission or rate limiting',
 		503 => 'Pocket\'s sync server is down for scheduled maintenance'
-	);
+    ];
 
 	/**
 	* Constructor
@@ -76,23 +76,23 @@ class Pocket {
 	}
 
 	public function requestToken($redirectUri, $state = false) {
-		$params = array();
+		$params = [];
 		$params['redirect_uri'] = $redirectUri;
 		if ($state != false) {
 			$params['state'] = $state;
 		}
 		$result = $this->_request('/oauth/request', $params);
-		$query = array(
+		$query = [
 			'request_token' => $result['code'],
 			'redirect_uri' => $redirectUri
-		);
+        ];
 
 		$query['redirect_uri'] = 'https://getpocket.com/auth/authorize?' . http_build_query($query);
 		return $query;
 	}
 
 	public function convertToken($token) {
-		$params = array();
+		$params = [];
 		$params['code'] = $token;
 		$result = $this->_request('/oauth/authorize', $params);
 		return $result;
@@ -107,7 +107,7 @@ class Pocket {
 	* @return array	Response from Pocket
 	* @throws PocketException
 	*/
-	public function retrieve($params = array(), $accessToken = true) {
+	public function retrieve($params = [], $accessToken = true) {
 		return $this->_request('/get', $params, $accessToken);
 	}
 
@@ -120,21 +120,24 @@ class Pocket {
 	* @return array	Response from Pocket
 	* @throws PocketException
 	*/
-	public function add($params = array(), $accessToken = true) {
+	public function add($params = [], $accessToken = true) {
 		return $this->_request('/add', $params, $accessToken);
 	}
 
-	/**
-	* Private method that makes the HTTP call to Pocket using cURL
-	*
-	* @return array Response from Pocket
-	* @throws PocketException
-	*/
-	private function _request($method, $params = null, $accessToken = false) {
+    /**
+     *
+     * Private method that makes the HTTP call to Pocket using cURL
+     * @param $method
+     * @param null $params
+     * @param bool $accessToken
+     * @return array Response from Pocket
+     * @throws PocketException
+     */
+    private function _request($method, $params = null, $accessToken = false) {
 		$url = $this->_config['apiUrl'] . $method;
 
 		if (!$params) {
-			$params = array();
+			$params = [];
 		}
 		$params['consumer_key'] = $this->_config['consumerKey'];
 		if ($accessToken === true) {
@@ -153,7 +156,7 @@ class Pocket {
 		curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($c, CURLOPT_HEADER, $this->_config['debug']);
 		curl_setopt($c, CURLINFO_HEADER_OUT, true);
-		curl_setopt($c, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'X-Accept: application/json'));
+		curl_setopt($c, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'X-Accept: application/json']);
 		curl_setopt($c, CURLOPT_USERAGENT, self::CURL_USERAGENT);
 		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, self::CURL_CONNECTTIMEOUT);
 		curl_setopt($c, CURLOPT_TIMEOUT, self::CURL_TIMEOUT);
